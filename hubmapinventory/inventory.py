@@ -859,3 +859,24 @@ def create(
     print("\nDone\n")
 
     return df
+
+
+def get(
+    hubmap_id: str,
+    token: str,
+) -> pd.DataFrame:
+    metadata = hubmapbags.apis.get_dataset_info(hubmap_id, instance="prod", token=token)
+
+    filename = f'{metadata["uuid"]}.tsv'
+
+    directory = "data"
+    file = f"{directory}/{filename}"
+    if Path(file):
+        return pd.read_csv(file, sep="\t")
+
+    directory = "/hive/hubmap/bdbags/inventory"
+    file = f"{directory}/{filename}"
+    if Path(file):
+        return pd.read_csv(file, sep="\t")
+
+    return pd.DataFrame()
