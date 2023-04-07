@@ -865,18 +865,25 @@ def get(
     hubmap_id: str,
     token: str,
 ) -> pd.DataFrame:
-    metadata = hubmapbags.apis.get_dataset_info(hubmap_id, instance="prod", token=token)
+    '''
+    Loads local inventory and returns file level information.
+    '''
 
-    filename = f'{metadata["uuid"]}.tsv'
+    try:
+        metadata = hubmapbags.apis.get_dataset_info(hubmap_id, instance="prod", token=token)
 
-    directory = "data"
-    file = f"{directory}/{filename}"
-    if Path(file):
-        return pd.read_csv(file, sep="\t")
+        filename = f'{metadata["uuid"]}.tsv'
 
-    directory = "/hive/hubmap/bdbags/inventory"
-    file = f"{directory}/{filename}"
-    if Path(file):
-        return pd.read_csv(file, sep="\t")
+        directory = "data"
+        file = f"{directory}/{filename}"
+        if Path(file):
+            return pd.read_csv(file, sep="\t")
 
-    return pd.DataFrame()
+        directory = "/hive/hubmap/bdbags/inventory"
+        file = f"{directory}/{filename}"
+        if Path(file):
+            return pd.read_csv(file, sep="\t")
+        
+        return pd.DataFrame()
+    except:
+        return pd.DataFrame()
