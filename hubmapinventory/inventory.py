@@ -55,7 +55,7 @@ def get(
     if Path(filename).exists():
         return pd.read_csv(filename, sep="\t", low_memory=False)
 
-    directory = ".data"
+    directory = "/hive/hubmap/bdbags/inventory"
     filename = f"{directory}/{file}"
     if Path(filename).exists():
         return pd.read_csv(filename, sep="\t", low_memory=False)
@@ -880,31 +880,3 @@ def create(
     print("\nDone\n")
 
     return df
-
-
-def get(
-    hubmap_id: str,
-    token: str,
-) -> pd.DataFrame:
-    '''
-    Loads local inventory and returns file level information.
-    '''
-
-    try:
-        metadata = hubmapbags.apis.get_dataset_info(hubmap_id, instance="prod", token=token)
-
-        filename = f'{metadata["uuid"]}.tsv'
-
-        directory = "data"
-        file = f"{directory}/{filename}"
-        if Path(file):
-            return pd.read_csv(file, sep="\t")
-
-        directory = "/hive/hubmap/bdbags/inventory"
-        file = f"{directory}/{filename}"
-        if Path(file):
-            return pd.read_csv(file, sep="\t")
-        
-        return pd.DataFrame()
-    except:
-        return pd.DataFrame()
