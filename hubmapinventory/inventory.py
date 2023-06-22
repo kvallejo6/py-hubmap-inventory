@@ -29,9 +29,9 @@ except:
 def evaluate(hubmap_id: str,
     token: str,
     debug: bool,
-) -> pd.DataFrame:)
-    '''
-    Returns FAIRness assessment of a particular dataset given a HuBMAP ID.
+) -> pd.DataFrame:
+
+    '''Returns FAIRness assessment of a particular dataset given a HuBMAP ID.
     '''
     raise NotImplementedError
 
@@ -58,6 +58,79 @@ def __get_number_of_sequences(data):
 
 def __get_data_type(data):
     return None
+
+############################################################################
+#access protocols (FM-A1.1) metrics
+from urllib.parse import urlparse
+
+def get_access_protocol(download_url):
+    url_parts = urlparse(download_url)
+    return url_parts.scheme
+
+download_url = 'https://example.com/path/to/file'#can be found in tsv files
+access_protocol = get_access_protocol(download_url)
+print(access_protocol)  # will print: https
+
+
+# Any additional authorization procedures(FM-A1.2)
+import requests
+
+def download_file(url, token):
+    headers = {
+        'Authorization': f'Bearer {token}',
+    }
+    response = requests.get(url, headers=headers)
+
+    if response.status_code == 200:
+        return response.content
+    else:
+        print(f'Error downloading file: {response.status_code}')
+        return None
+    
+
+# Metadata longevity (FM-A2) metrics
+
+from datetime import datetime
+
+# # Load the TSV file into a DataFrame
+# df = pd.read_csv('file.tsv', sep='\t')
+def check_metadata_longevity(df, column='modification_time'):
+    # convert to datetime
+    df[column] = pd.to_datetime(df[column])
+
+    # Calculate the difference in days between the current time and the modification time
+    df['days_since_modification'] = (datetime.now() - df[column]).dt.days
+
+    return df
+
+# Use the function
+df = check_metadata_longevity(df)
+# print(df[['file_uuid', 'days_since_modification']])
+
+
+# Ensure the public registration of their identifier schemes (FM-F1A) metrics
+def check_public_reg(url):
+    '''
+    it will check the url if it has any DOIs, ISBN or ORCID number as publicly registered identifiers
+    '''
+    return True
+
+# Machine-readable metadata (FM-F2, FM-F3)
+
+def check_machine_readability(df, column='extension'):
+    machine_readable_extensions = {'json', 'csv', 'xml', 'tsv', 'yaml'} #commonly used ones
+    
+    # Create a new column in the DataFrame that indicates whether the file is machine-readable
+    df['is_machine_readable'] = df[column].isin(machine_readable_extensions)
+    
+    for _, row in df.iterrows():
+        print(f"File UUID: {row['file_uuid']}, Likely machine-readable: {row['is_machine_readable']}")
+
+df = ...  # your DataFrame here
+check_machine_readability(df)
+
+# Print 'file_uuid' and 'is_machine_readable' for each row
+
 
 ###############################################################################################################
 def __pprint(msg: str):
