@@ -27,6 +27,57 @@ except:
 
 
 ###############################################################################################################
+def evaluate(hubmap_id: str, token: str, debug: bool) -> pd.DataFrame:
+    """
+    Returns FAIRness assessment of a particular dataset given a HuBMAP ID.
+    """
+    raise NotImplementedError
+
+    # either a dataframe or a JSON block with data
+    data = get(hubmap_id, token)
+
+    # create empty container
+    features = []
+
+    # computes first feature
+    features.append(__get_number_of_files(data))
+    features.append(__get_number_of_uuids(data))
+    features.append(__get_uuid_coverage(data))
+
+    return features
+
+
+# this is a metric of FAIRness
+def __get_number_of_files(data):
+    """
+    Helper function that returns the number of files associated with a dataset
+    """
+    return len(data)
+
+
+def __get_number_of_uuids(data):
+    """
+    Helper function that returns the number of UUIDs in the dataset
+
+    For reference, at the moment this package written, public protected datasets do not have UUIDs
+    """
+    return data["file_uuid	"].count()
+
+
+def __get_uuid_coverage(data):
+    """
+    Helper function that returns the UUID coverage
+
+    For reference, this number should be either 0 or 1
+    """
+    return data["file_uuid	"].count() / len(data)
+
+
+def __get_data_type(data):
+    return None
+
+
+###############################################################################################################
 def __pprint(msg: str):
     row = len(msg)
     h = "".join(["+"] + ["-" * row] + ["+"])
@@ -55,7 +106,7 @@ def get(
     if Path(filename).exists():
         return pd.read_csv(filename, sep="\t", low_memory=False)
 
-    directory = "/hive/hubmap/bdbags/inventory"
+    directory = ".data"
     filename = f"{directory}/{file}"
     if Path(filename).exists():
         return pd.read_csv(filename, sep="\t", low_memory=False)
