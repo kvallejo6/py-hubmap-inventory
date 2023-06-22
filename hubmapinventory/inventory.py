@@ -77,14 +77,21 @@ def __get_file_extensions(data):
     """
     Helper function that returns a dictionary with counts.
     """
-    return data["extension"].value_counts()
+    return data["extension"].value_counts().to_dict()
 
 
-def __get_file_type(data):
+def __get_file_types(data):
     """
     Helper function that returns a dictionary with counts.
     """
-    return data["file_type"].value_counts()
+    return data["file_type"].value_counts().to_dict()
+
+
+def __get_dataset_size(data):
+    """
+    Helper function that returns a dictionary with counts.
+    """
+    return data["size"].sum()
 
 
 ###############################################################################################################
