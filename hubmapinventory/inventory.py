@@ -70,11 +70,21 @@ def __get_uuid_coverage(data):
 
     For reference, this number should be either 0 or 1
     """
-    return data["file_uuid	"].count() / len(data)
+    return data["file_uuid"].count() / len(data)
 
 
-def __get_data_type(data):
-    return None
+def __get_file_extensions(data):
+    """
+    Helper function that returns a dictionary with counts.
+    """
+    return data["extension"].value_counts()
+
+
+def __get_file_type(data):
+    """
+    Helper function that returns a dictionary with counts.
+    """
+    return data["file_type"].value_counts()
 
 
 ###############################################################################################################
